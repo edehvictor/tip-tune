@@ -11,7 +11,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Tip, TipStatus } from "./entities/tip.entity";
 import { CreateTipDto } from "./create-tips.dto";
-// Removed unused imports (PaginatedResponse, paginate) to satisfy ESLint
+import { PaginatedResponseDto, PaginationQueryDto } from './pagination.dto';
+
 import { StellarService } from "../stellar/stellar.service";
 import { UsersService } from "../users/users.service";
 import { NotificationsService } from "../notifications/notifications.service";
@@ -23,26 +24,6 @@ import { FeesService } from "../fees/fees.service";
 import { ModerationService } from "../moderation/moderation.service";
 import { BlocksService } from "../blocks/blocks.service";
 import { TipReconciliationService } from "./tip-reconciliation.service";
-
-// Make sure to define PaginatedResponseDto locally or import it from the correct path if it exists
-export interface PaginatedResponseDto<T> {
-  data: T[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-}
-
-// Add PaginationQueryDto interface since it was implicitly used
-export interface PaginationQueryDto {
-  page?: number;
-  limit?: number;
-  status?: string;
-}
 
 @Injectable()
 export class TipsService {
@@ -223,7 +204,6 @@ export class TipsService {
       queryBuilder.andWhere("tip.status = :status", { status });
     }
 
-    // ESLint Fix: Separate the const array from the reassigned data variable
     const [originalData, total] = await queryBuilder.getManyAndCount();
 
     const data = originalData.map(tip => {
@@ -257,7 +237,6 @@ export class TipsService {
       queryBuilder.andWhere("tip.status = :status", { status });
     }
 
-    // ESLint Fix: Separate the const array from the reassigned data variable
     const [originalData, total] = await queryBuilder.getManyAndCount();
 
     const data = originalData.map(tip => {
